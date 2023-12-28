@@ -1,13 +1,37 @@
 from django.shortcuts import render
 from django.views.generic import FormView
 from .forms import UserRegistrationForm, UserUpdateForm
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.urls import reverse_lazy
 from django.views import View
 from django.shortcuts import redirect
 from django.contrib.auth.views import LoginView, LogoutView
 
+# change passwword
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, SetPasswordForm
+# from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 # Create your views here.
+
+# send email
+from transactions.views import send_transaction_email
+ 
+
+def passward_change(request):
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            form = SetPasswordForm(user = request.user, data=request.POST)
+            if form.is_valid():
+                form.save()
+                send_transaction_email(request.user, 'pass change', "password change Message", "pass_change_email.html")
+                # password update korbe
+                update_session_auth_hash(request, form.user)
+                return redirect('profile')
+        else:
+            form = SetPasswordForm(user=request.user)
+
+        return render(request, 'passwordChange.html', {'form': form})
+    else:
+        return redirect('login')
 
 class UserRegistrationViews(FormView):
     template_name = 'user_regostration.html'
