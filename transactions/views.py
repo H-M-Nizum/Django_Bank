@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.http import HttpResponse
 from django.views.generic import CreateView, ListView
-from transactions.constants import DEPOSIT, WITHDRAWAL,LOAN, LOAN_PAID, SENDMONEY
+from transactions.constants import DEPOSIT, WITHDRAWAL,LOAN, LOAN_PAID, SENDMONEY, RECIVEMONEY
 from datetime import datetime
 from django.db.models import Sum
 from transactions.forms import (
@@ -14,10 +14,13 @@ from transactions.forms import (
     WithdrawForm,
     LoanRequestForm,
     sendmoneyForm,
+    TransferForm,
 )
 from transactions.models import Transaction
 from django.contrib.auth.models import User
 
+from accounts.models import UserBankAccountModel
+from django.shortcuts import render, redirect
 
 # for email send
 from django.core.mail import EmailMessage, EmailMultiAlternatives
@@ -118,7 +121,7 @@ class WithdrawMoneyView(TransactionCreateMixin):
         
         return super().form_valid(form)
 
-
+#########################################################################
 
 class sendmoneyview(TransactionCreateMixin):
     form_class = sendmoneyForm
@@ -145,7 +148,69 @@ class sendmoneyview(TransactionCreateMixin):
         )
 
         return super().form_valid(form)
-    
+
+
+def transfer_money(request):
+    title = 'Send Money'
+    if request.method == 'POST':
+        form = TransferForm(request.POST)
+        if form.is_valid():
+            sender_account = request.user.account  # Assuming the sender is the logged-in user
+            print(sender_account.balance)
+            receiver = form.cleaned_data['receiver_account']
+            print(UserBankAccountModel.objects.all())
+            if UserBankAccountModel.objects.get(account_no = receiver):
+                receiver_account = UserBankAccountModel.objects.get(account_no = receiver)
+                print(receiver_account.balance)
+                amount = form.cleaned_data['amount']
+                print(amount)
+
+                if sender_account.balance >= amount:
+                    # Update sender's balance
+                    sender_account.balance -= amount
+                    sender_account.save()
+                    send_transaction_email(sender_account.user, amount, "send money Message", "send_money_email.html")
+                    
+                    
+                    receiver_account.balance += amount
+                    receiver_account.save()
+                    send_transaction_email(receiver_account.user, amount, "Recive money Message", "recive_money_email.html")
+                    
+                    
+                     # Create and save a Transaction instance
+                    transaction = Transaction(
+                        account=sender_account,
+                        amount=amount,
+                        balance_after_transaction=sender_account.balance,
+                        transaction_type=SENDMONEY,  # Set the actual value
+                        loan_approve=False,  # You may need to set this based on your business logic
+                    )
+                    transaction.save()
+                    transaction = Transaction(
+                        account=receiver_account,
+                        amount=amount,
+                        balance_after_transaction=receiver_account.balance,
+                        transaction_type=RECIVEMONEY,  # Set the actual value
+                        loan_approve=False,  # You may need to set this based on your business logic
+                    )
+                    transaction.save()
+
+                    # Optionally, you can send transaction emails here
+
+                    return redirect('home')  # Redirect to a success page
+            else:
+                print('User not found')
+            
+
+    else:
+        form = TransferForm()
+
+    return render(request, 'transfer_money.html', {'form': form})
+
+
+
+#########################################################################
+
 
 class LoanRequestView(TransactionCreateMixin):
     form_class = LoanRequestForm

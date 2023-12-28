@@ -64,6 +64,8 @@ class WithdrawForm(TransactionForm):
 
         return amount
 
+
+
 class sendmoneyForm(TransactionForm):
     
 
@@ -94,3 +96,8 @@ class LoanRequestForm(TransactionForm):
         amount = self.cleaned_data.get('amount')
 
         return amount
+    
+    
+class TransferForm(forms.Form):
+    receiver_account = forms.IntegerField()
+    amount = forms.DecimalField()
