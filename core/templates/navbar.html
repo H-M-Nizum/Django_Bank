@@ -1,6 +1,7 @@
-<nav class="flex items-center justify-between flex-wrap bg-white p-6 px-10">
+<nav style="background: rgb(2,0,36);
+background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(165,238,253,1) 0%, rgba(115,115,129,1) 20%, rgba(190,191,206,1) 80%, rgba(86,204,229,1) 100%);" class="flex items-center justify-between flex-wrap text-white p-6 px-10">
     <div class="flex items-center flex-shrink-0 text-white mr-6">
-        <span class="font-semibold text-xl tracking-tight text-blue-900"><a href="/">Mamar Bank</a></span>
+        <span class="font-semibold text-xl tracking-tight text-white text-blue-900"><a href="/">Django Bank</a></span>
     </div>
     <div class="block lg:hidden">
         <button class="flex items-center px-3 py-2 border rounded text-white border-white-400 hover:text-white hover:border-white">
@@ -11,25 +12,25 @@
     <!-- Report , Withdraw, Deposit       Profile Logout logged in user -->
     <div class="w-full block flex-grow lg:flex lg:items-center lg:w-auto px-10">
         {% if request.user.is_authenticated %}
-            <div class="text-md lg:flex-grow">
-                <a href="{% url 'transaction_report' %}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-900 hover:text-red-900 hover:font-black mr-4">
+            <div class="text-md lg:flex-grow text-white">
+                <a href="{% url 'transaction_report' %}" class="block mt-4 lg:inline-block lg:mt-0  hover:text-red-900 hover:font-black mr-4 text-white">
                     Report
                 </a>
-                <a href="{% url 'deposit_money' %}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-900 hover:text-red-900 hover:font-black mr-4">
+                <a href="{% url 'deposit_money' %}" class="block mt-4 lg:inline-block lg:mt-0  hover:text-red-900 hover:font-black mr-4 text-white">
                     Deposit
                 </a>
-                <a href="{% url 'withdraw_money' %}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-900 hover:text-red-900 hover:font-black mr-4">
+                <a href="{% url 'withdraw_money' %}" class="block mt-4 lg:inline-block lg:mt-0  hover:text-red-900 hover:font-black mr-4">
                     Withdraw
                 </a>
-                <a href="{% url 'sendmoney' %}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-900 hover:text-red-900 hover:font-black mr-4">
+                <a href="{% url 'sendmoney' %}" class="block mt-4 lg:inline-block lg:mt-0  hover:text-red-900 hover:font-black mr-4">
                     Send Money
                 </a>
-                <a href="{% url 'loan_request' %}" class="block mt-4 lg:inline-block lg:mt-0 text-blue-900 hover:text-red-900 hover:font-black mr-4">
+                <a href="{% url 'loan_request' %}" class="block mt-4 lg:inline-block lg:mt-0  hover:text-red-900 hover:font-black mr-4">
                     Loan Request
                 </a>
             </div>
             <div class="flex w-auto">
-                <div class="text-blue-900 my-auto font-black px-5">Welcome, {{ request.user.username }} (balance : {{request.user.account.balance}}) </div>
+                <div class=" my-auto font-black px-5">Welcome, {{ request.user.username }} (balance : {{request.user.account.balance}}) </div>
 
                 <a href="{% url 'profile' %}" class="mx-2 inline-block font-medium text-sm px-4 py-2 leading-none bg-blue-900 rounded text-white border-white hover:border-transparent hover:text-dark hover:bg-red-700 mt-4 lg:mt-0">Profile</a>
                 <a href="{% url 'logout' %}" class="mx-2 inline-block font-medium text-sm px-4 py-2 leading-none bg-blue-900 rounded text-white border-white hover:border-transparent hover:text-dark hover:bg-red-700 mt-4 lg:mt-0">Logout</a>

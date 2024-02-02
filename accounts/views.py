@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import FormView
 from .forms import UserRegistrationForm, UserUpdateForm
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
@@ -49,14 +49,18 @@ class Userloginviews(LoginView):
     template_name = 'user_login.html'
     
     def get_success_url(self):
-        return reverse_lazy('profile')
-    
-class userlogoutview(LogoutView):
-    def get_success_url(self):
-        if self.request.user.is_authenticated:
-            logout(self.request)
         return reverse_lazy('home')
     
+# class userlogoutview(LogoutView):
+#     def get_success_url(self):
+#         if self.request.user.is_authenticated:
+#             logout(self.request)
+#         return redirect('home')
+
+class userlogoutview(View):
+    def get(self, request):
+        logout(request)
+        return redirect('home')
 
 # profile view
 class UserBankAccountUpdateView(View):
